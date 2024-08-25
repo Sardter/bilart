@@ -1,0 +1,102 @@
+1. GET
+
+When we query for a non-existing object, we get the following response from backend: 
+
+{
+  "data": [],
+  "success": true,
+  "message": "Data retrieved successfully"
+}
+
+Not sure if this is a problem.
+
+2. In the "User" table, we have the "role" attribute, and it seems it has no functionality in 
+the application since we have now different tables for Artist, Collector and Admin. We may want to delete it.
+
+3. DELETE 
+
+When we try to delete a non-existing object, we get the following response from backend: 
+
+{
+  "message": "0 row(s) deleted successfully",
+  "success": true
+}
+
+Not sure if this is a problem.
+
+4. UPDATE 
+
+When we try to update a non-existing object, we get the following response from backend: 
+
+{
+  "message": "0 row(s) updated successfully",
+  "success": true
+}
+
+Not sure if this is a problem.
+
+5. UPDATE "/users"
+
+I'm not sure if this is a problem, but even when we update (edit) a single field, we require the frontend to send 
+all of the user data. For example, assume a user wanted to change his username, would the frontend send 
+
+{
+  "username": "qwe"
+}
+
+or
+
+{
+  "username": "qwe",
+  "first_name": "q",
+  "last_name": "we",
+  "email": "qweqwe@qwe.com",
+  "password": "qwe",
+  "phone": "qweqweqweqwe"
+}
+
+Currently when the frontend sends a request like the first one, the system fails.
+
+6. PUT "/collectors
+
+Do we really need to change a collector's user id?
+
+7. GET "/admins"
+
+I guess there's a typo in get_admins() because it searches for admins in the Collector table, hence the query
+
+{
+  "data": null,
+  "success": false,
+  "message": "column \"admin_id\" does not exist\nLINE 1: SELECT * FROM Collector WHERE admin_id = '1';\n                                      ^\n"
+}
+
+8. In the Admin table, we have
+
+    privileges VARCHAR(1)
+
+Does every char denote a different privilege or something? I can't see how this works.
+
+9. This is too a typo I guess (we're searching for bids in Tag table):
+
+
+@get("/bids/")
+def get_bids(
+    bid_id: int | None = None,
+    price: str | None = None,
+    auction_id: int | None = None,
+    collector_id: int | None = None,
+    payment_done: bool | None = None,
+    created_at: str | None = None
+):
+    success, message, users = retrieve(
+        table=Tables.Tag.value,
+        bid_id=bid_id,
+        price=price,
+        auction_id=auction_id,
+        collector_id=collector_id,
+        payment_done=payment_done,
+        created_at=created_at
+    )
+
+    return {"data": users, "success": success, "message": message}
